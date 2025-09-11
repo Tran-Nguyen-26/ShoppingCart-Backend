@@ -23,8 +23,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageService implements IImageService {
 
-  private ImageRepository imageRepository;
-  private IProductService productService;
+  private final ImageRepository imageRepository;
+  private final IProductService productService;
 
   @Override
   public Image getImageById(Long id) {

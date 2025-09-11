@@ -4,12 +4,17 @@ import java.util.List;
 import java.util.Optional;
 
 import com.dreamshop.dreamshop.model.Category;
+import com.dreamshop.dreamshop.model.Image;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.dreamshop.dreamshop.dto.ImageDto;
+import com.dreamshop.dreamshop.dto.ProductDto;
 import com.dreamshop.dreamshop.exceptions.ProductNotFoundException;
 import com.dreamshop.dreamshop.model.Product;
 import com.dreamshop.dreamshop.repository.CategoryRepository;
+import com.dreamshop.dreamshop.repository.ImageRepository;
 import com.dreamshop.dreamshop.repository.ProductRepository;
 import com.dreamshop.dreamshop.request.AddProductRequest;
 import com.dreamshop.dreamshop.request.ProductUpdateRequest;
@@ -20,8 +25,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
 
-  private ProductRepository productRepository;
-  private CategoryRepository categoryRepository;
+  private final ProductRepository productRepository;
+  private final CategoryRepository categoryRepository;
+  private final ImageRepository imageRepository;
+  private final ModelMapper modelMapper;
 
   @Override
   public Product addProduct(AddProductRequest request) {
@@ -113,6 +120,20 @@ public class ProductService implements IProductService {
   @Override
   public Long countProductsByBrandAndName(String brand, String name) {
     return productRepository.countByBrandAndName(brand, name);
+  }
+
+  @Override
+  public List<ProductDto> getConvertedProducts(List<Product> products) {
+    return products.stream().map(this::convertToDto).toList();
+  }
+
+  @Override
+  public ProductDto convertToDto(Product product) {
+    ProductDto productDto = modelMapper.map(product, ProductDto.class);
+    List<Image> images = imageRepository.findByProductId(product.getId());
+    List<ImageDto> imageDtos = images.stream().map(image -> modelMapper.map(image, ImageDto.class)).toList();
+    productDto.setImages(imageDtos);
+    return productDto;
   }
 
 }

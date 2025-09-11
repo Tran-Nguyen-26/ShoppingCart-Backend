@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dreamshop.dreamshop.dto.ProductDto;
 import com.dreamshop.dreamshop.model.Product;
 import com.dreamshop.dreamshop.request.AddProductRequest;
 import com.dreamshop.dreamshop.request.ProductUpdateRequest;
@@ -31,13 +32,15 @@ public class ProductController {
   @GetMapping("/all")
   public ResponseEntity<ApiResponse> getAllProducts() {
     List<Product> products = productService.getAllProducts();
-    return ResponseEntity.ok(new ApiResponse("success", products));
+    List<ProductDto> productDtos = productService.getConvertedProducts(products);
+    return ResponseEntity.ok(new ApiResponse("success", productDtos));
   }
 
-  @GetMapping("{id}/product")
+  @GetMapping("/id/{id}/product")
   public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
     Product product = productService.getProductById(id);
-    return ResponseEntity.ok(new ApiResponse("success", product));
+    ProductDto productDto = productService.convertToDto(product);
+    return ResponseEntity.ok(new ApiResponse("success", productDto));
   }
 
   @PostMapping("/add")
@@ -58,13 +61,21 @@ public class ProductController {
     return ResponseEntity.ok(new ApiResponse("delete product success", null));
   }
 
+  @GetMapping("{category}/all/products")
+  public ResponseEntity<ApiResponse> getProductsByCategory(@PathVariable String category) {
+    List<Product> products = productService.getProductsByCategory(category);
+    List<ProductDto> productDtos = productService.getConvertedProducts(products);
+    return ResponseEntity.ok(new ApiResponse("found", productDtos));
+  }
+
   @GetMapping("by/brand-and-name")
   public ResponseEntity<ApiResponse> getProductByBrandAndName(@RequestParam String brand, @RequestParam String name) {
     List<Product> products = productService.getProductsByBrandAndName(brand, name);
     if (products.isEmpty()) {
       return ResponseEntity.status(404).body(new ApiResponse("no products found", null));
     }
-    return ResponseEntity.ok(new ApiResponse("success", products));
+    List<ProductDto> productDtos = productService.getConvertedProducts(products);
+    return ResponseEntity.ok(new ApiResponse("success", productDtos));
   }
 
   @GetMapping("by/category-and-brand")
@@ -78,12 +89,13 @@ public class ProductController {
   }
 
   @GetMapping("/by-brand")
-  public ResponseEntity<ApiResponse> getProductsBrand(@RequestParam String brand) {
+  public ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String brand) {
     List<Product> products = productService.getProductsByBrand(brand);
     if (products.isEmpty()) {
       return ResponseEntity.status(404).body(new ApiResponse("no products found", null));
     }
-    return ResponseEntity.ok(new ApiResponse("success", products));
+    List<ProductDto> productDtos = productService.getConvertedProducts(products);
+    return ResponseEntity.ok(new ApiResponse("success", productDtos));
   }
 
   @GetMapping("{name}/product")
@@ -92,7 +104,8 @@ public class ProductController {
     if (products.isEmpty()) {
       return ResponseEntity.status(404).body(new ApiResponse("no products found", null));
     }
-    return ResponseEntity.ok(new ApiResponse("success", products));
+    List<ProductDto> productDtos = productService.getConvertedProducts(products);
+    return ResponseEntity.ok(new ApiResponse("success", productDtos));
   }
 
   @GetMapping("/count/by-brand/and-name")
