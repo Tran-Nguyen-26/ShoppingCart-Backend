@@ -1,0 +1,9 @@
+package com.dreamshop.dreamshop.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.dreamshop.dreamshop.model.Cart;
+
+public interface CartRepository extends JpaRepository<Cart, Long> {
+
+}
