@@ -1,6 +1,7 @@
 package com.dreamshop.dreamshop.service.cart;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dreamshop.dreamshop.exceptions.ResourceNotFoundException;
 import com.dreamshop.dreamshop.model.Cart;
@@ -27,13 +28,13 @@ public class CartItemService implements ICartItemService {
     Product product = productService.getProductById(productId);
     CartItem cartItem = cart.getItems()
         .stream()
-        .filter(item -> item.getProduct().equals(product))
+        .filter(item -> item.getProduct().getId().equals(productId))
         .findFirst().orElse(new CartItem());
     if (cartItem.getId() == null) {
+      cartItem.setCart(cart);
+      cartItem.setProduct(product);
       cartItem.setQuantity(quantity);
       cartItem.setUnitPrice(product.getPrice());
-      cartItem.setProduct(product);
-      cartItem.setCart(cart);
     } else {
       cartItem.setQuantity(cartItem.getQuantity() + quantity);
     }

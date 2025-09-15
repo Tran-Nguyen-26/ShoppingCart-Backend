@@ -1,9 +1,9 @@
 package com.dreamshop.dreamshop.service.cart;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dreamshop.dreamshop.model.Cart;
 import com.dreamshop.dreamshop.repository.CartItemRepository;
@@ -17,7 +17,6 @@ public class CartService implements ICartService {
 
   private final CartRepository cartRepository;
   private final CartItemRepository cartItemRepository;
-  private final AtomicLong cartIdGenerator = new AtomicLong(0);
 
   @Override
   public Cart getCart(Long id) {
@@ -25,6 +24,7 @@ public class CartService implements ICartService {
         .orElseThrow(() -> new RuntimeException("cart not found"));
   }
 
+  @Transactional
   @Override
   public void clearCart(Long id) {
     Cart cart = this.getCart(id);
@@ -42,8 +42,11 @@ public class CartService implements ICartService {
   @Override
   public Long initializeNewCart() {
     Cart newCart = new Cart();
-    Long newCartId = cartIdGenerator.incrementAndGet();
-    newCart.setId(newCartId);
     return cartRepository.save(newCart).getId();
+  }
+
+  @Override
+  public Cart getCartByUserId(Long userId) {
+    return cartRepository.findByUserId(userId);
   }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dreamshop.dreamshop.model.Cart;
 import com.dreamshop.dreamshop.response.ApiResponse;
 import com.dreamshop.dreamshop.service.cart.ICartItemService;
 import com.dreamshop.dreamshop.service.cart.ICartService;
@@ -25,7 +26,7 @@ public class CartItemController {
 
   @PostMapping("/item/add")
   public ResponseEntity<ApiResponse> addItemToCart(
-      @RequestParam Long cartId,
+      @RequestParam(required = false) Long cartId,
       @RequestParam Long productId,
       @RequestParam int quantity) {
     if (cartId == null) {
