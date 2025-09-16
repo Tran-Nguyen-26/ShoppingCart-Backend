@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dreamshop.dreamshop.dto.OrderDto;
 import com.dreamshop.dreamshop.model.Order;
 import com.dreamshop.dreamshop.response.ApiResponse;
 import com.dreamshop.dreamshop.service.order.IOrderService;
@@ -31,13 +32,13 @@ public class OrderController {
 
   @GetMapping("/{orderId}/order")
   public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
-    Order order = orderService.getOrder(orderId);
-    return ResponseEntity.ok(new ApiResponse("success", order));
+    OrderDto orderDto = orderService.getOrder(orderId);
+    return ResponseEntity.ok(new ApiResponse("success", orderDto));
   }
 
   @GetMapping("/{userId}/orders")
   public ResponseEntity<ApiResponse> getUserOrders(Long userId) {
-    List<Order> orders = orderService.getUserOrders(userId);
-    return ResponseEntity.ok(new ApiResponse("success", orders));
+    List<OrderDto> ordersDto = orderService.getUserOrders(userId);
+    return ResponseEntity.ok(new ApiResponse("success", ordersDto));
   }
 }

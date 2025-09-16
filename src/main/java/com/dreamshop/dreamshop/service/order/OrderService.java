@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.dreamshop.dreamshop.dto.OrderDto;
 import com.dreamshop.dreamshop.enums.OrderStatus;
 import com.dreamshop.dreamshop.exceptions.ResourceNotFoundException;
 import com.dreamshop.dreamshop.model.Cart;
@@ -26,6 +28,7 @@ public class OrderService implements IOrderService {
   private final OrderRepository orderRepository;
   private final ProductRepository productRepository;
   private final ICartService cartService;
+  private final ModelMapper modelMapper;
 
   @Override
   public Order placeOrder(Long userId) {
@@ -67,14 +70,25 @@ public class OrderService implements IOrderService {
   }
 
   @Override
-  public Order getOrder(Long orderId) {
-    return orderRepository.findById(orderId)
+  public OrderDto getOrder(Long orderId) {
+    return orderRepository
+        .findById(orderId)
+        .map(this::convertToDto)
         .orElseThrow(() -> new ResourceNotFoundException("order not found"));
   }
 
   @Override
-  public List<Order> getUserOrders(Long userId) {
-    return orderRepository.findByUserId(userId);
+  public List<OrderDto> getUserOrders(Long userId) {
+    return orderRepository
+        .findByUserId(userId)
+        .stream()
+        .map(this::convertToDto).toList();
+  }
+
+  @Override
+  public OrderDto convertToDto(Order order) {
+    OrderDto orderDto = modelMapper.map(order, OrderDto.class);
+    return orderDto;
   }
 
 }
