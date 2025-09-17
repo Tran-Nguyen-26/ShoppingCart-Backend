@@ -27,7 +27,8 @@ public class OrderController {
   @PostMapping("/order")
   public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
     Order order = orderService.placeOrder(userId);
-    return ResponseEntity.ok(new ApiResponse("create success", order));
+    OrderDto orderDto = orderService.convertToDto(order);
+    return ResponseEntity.ok(new ApiResponse("create success", orderDto));
   }
 
   @GetMapping("/{orderId}/order")
@@ -37,7 +38,7 @@ public class OrderController {
   }
 
   @GetMapping("/{userId}/orders")
-  public ResponseEntity<ApiResponse> getUserOrders(Long userId) {
+  public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
     List<OrderDto> ordersDto = orderService.getUserOrders(userId);
     return ResponseEntity.ok(new ApiResponse("success", ordersDto));
   }

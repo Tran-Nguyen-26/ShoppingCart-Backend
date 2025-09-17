@@ -3,6 +3,7 @@ package com.dreamshop.dreamshop.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,18 +44,21 @@ public class ProductController {
     return ResponseEntity.ok(new ApiResponse("success", productDto));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/add")
   public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
     Product addProduct = productService.addProduct(product);
     return ResponseEntity.ok(new ApiResponse("add product success", addProduct));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{id}/update")
   public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductUpdateRequest product, @PathVariable Long id) {
     Product updateProduct = productService.updateProduct(product, id);
     return ResponseEntity.ok(new ApiResponse("update product success", updateProduct));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}/delete")
   public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
     productService.deleteProductById(id);

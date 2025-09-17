@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dreamshop.dreamshop.model.Cart;
+import com.dreamshop.dreamshop.model.User;
 import com.dreamshop.dreamshop.response.ApiResponse;
 import com.dreamshop.dreamshop.service.cart.ICartItemService;
 import com.dreamshop.dreamshop.service.cart.ICartService;
+import com.dreamshop.dreamshop.service.user.IUserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,16 +25,15 @@ public class CartItemController {
 
   private final ICartItemService cartItemService;
   private final ICartService cartService;
+  private final IUserService userService;
 
   @PostMapping("/item/add")
   public ResponseEntity<ApiResponse> addItemToCart(
-      @RequestParam(required = false) Long cartId,
       @RequestParam Long productId,
       @RequestParam int quantity) {
-    if (cartId == null) {
-      cartId = cartService.initializeNewCart();
-    }
-    cartItemService.addItemToCart(cartId, productId, quantity);
+    User user = userService.getAuthenticatedUser();
+    Cart cart = cartService.initializeNewCart(user);
+    cartItemService.addItemToCart(cart.getId(), productId, quantity);
     return ResponseEntity.ok(new ApiResponse("add item success", null));
   }
 

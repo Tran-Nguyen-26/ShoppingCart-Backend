@@ -1,11 +1,13 @@
 package com.dreamshop.dreamshop.service.cart;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dreamshop.dreamshop.model.Cart;
+import com.dreamshop.dreamshop.model.User;
 import com.dreamshop.dreamshop.repository.CartItemRepository;
 import com.dreamshop.dreamshop.repository.CartRepository;
 
@@ -40,9 +42,14 @@ public class CartService implements ICartService {
   }
 
   @Override
-  public Long initializeNewCart() {
-    Cart newCart = new Cart();
-    return cartRepository.save(newCart).getId();
+  public Cart initializeNewCart(User user) {
+    return Optional
+        .ofNullable(this.getCartByUserId(user.getId()))
+        .orElseGet(() -> {
+          Cart cart = new Cart();
+          cart.setUser(user);
+          return cartRepository.save(cart);
+        });
   }
 
   @Override

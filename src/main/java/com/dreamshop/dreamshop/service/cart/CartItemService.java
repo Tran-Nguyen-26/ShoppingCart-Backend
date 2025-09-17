@@ -1,7 +1,6 @@
 package com.dreamshop.dreamshop.service.cart;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.dreamshop.dreamshop.exceptions.ResourceNotFoundException;
 import com.dreamshop.dreamshop.model.Cart;
